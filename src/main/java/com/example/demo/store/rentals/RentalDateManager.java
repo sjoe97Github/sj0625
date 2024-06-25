@@ -29,12 +29,10 @@ import java.util.List;
  *   Caveats - This class hardcodes:
  *       - The default date formats for input and output, in accordance with the demo specification.
  *       - The default holidays, also in accordance with the demo specification.
- *       - *** This class could be entirely static, but is implemented as a singleton partly to allow for future
- *             design flexibility (e.g. future support for overriding default holidays, date formats, etc..).
- *
- *   TODO -
- *      - Consider refactoring, providing setters and getters to allow overriding default holidays and date formats.
- *      - Revisit the use of Calendar, LocalDate, Date, and related classes, to ensure utmost consistency and efficiency.
+ *       - This class could be entirely static, but is implemented as a singleton partly to allow for future
+ *         design flexibility (e.g. future support for overriding default holidays, date formats, etc..).
+ *         TODO - Consider converting this class to a static utility class, thereby removing the singleton pattern; and
+ *                only providing functionality in support of the current demo specification (which are hardcoded).
  *
  */
 public class RentalDateManager {
@@ -166,7 +164,8 @@ public class RentalDateManager {
 
         // Convert LocalDate to Calendar and then to a Date
         Calendar calendar = Calendar.getInstance();
-        calendar.set(firstMondayInSeptember.getYear(), firstMondayInSeptember.getMonthValue() - 1, firstMondayInSeptember.getDayOfMonth());
+        calendar.set(firstMondayInSeptember.getYear(),
+                firstMondayInSeptember.getMonthValue() - 1, firstMondayInSeptember.getDayOfMonth());
         return calendar.getTime();
     }
 

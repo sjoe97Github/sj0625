@@ -1,0 +1,136 @@
+{
+    "tools": [
+        {
+            "id": null,
+            "brand": "Stihl",
+            "rentalCosts": {
+                "id": null,
+                "dailyCharge": "1.49",
+                "weekdayCharge": true,
+                "weekendCharge": false,
+                "holidayCharge": true,
+                "toolType": "Chainsaw"
+            },
+            "tool_code": "CHNS",
+            "tool_type": "Chainsaw"
+        },
+        {
+            "id": null,
+            "brand": "Werner",
+            "rentalCosts": {
+                "id": null,
+                "dailyCharge": "1.99",
+                "weekdayCharge": true,
+                "weekendCharge": true,
+                "holidayCharge": false,
+                "toolType": "Ladder"
+            },
+            "tool_code": "LADW",
+            "tool_type": "Ladder"
+        },
+        {
+            "id": null,
+            "brand": "DeWalt",
+            "rentalCosts": {
+                "id": null,
+                "dailyCharge": "2.99",
+                "weekdayCharge": true,
+                "weekendCharge": false,
+                "holidayCharge": false,
+                "toolType": "Jackhammer"
+            },
+            "tool_code": "JAKD",
+            "tool_type": "Jackhammer"
+        },
+        {
+            "id": null,
+            "brand": "Ridgid",
+            "rentalCosts": {
+                "id": null,
+                "dailyCharge": "2.99",
+                "weekdayCharge": true,
+                "weekendCharge": false,
+                "holidayCharge": false,
+                "toolType": "Jackhammer"
+            },
+            "tool_code": "JAKR",
+            "tool_type": "Jackhammer"
+        }
+    ],
+    "rentalRequests": [
+        {
+            "toolCode": "JAKR",
+            "checkoutDate": "07/02/24",
+            "numberOfRentalDays": 7,
+            "discount": "10"
+        },
+        {
+            "toolCode": "JAKR",
+            "checkoutDate": "07/02/24",
+            "numberOfRentalDays": 1,
+            "discount": "10"
+        }
+    ],
+    "scenarios": [
+        {
+            "scenarioName": "Test1_DiscountGreaterThan100",
+            "rentalRequest": {
+                "toolCode": "JAKR",
+                "checkoutDate": "09/03/15",
+                "numberOfRentalDays": 5,
+                "discount": "101"
+            },
+            "expectedFinalCharge": "-1.00"
+        },
+        {
+            "scenarioName": "Test2",
+            "rentalRequest": {
+                "toolCode": "LADW",
+                "checkoutDate": "07/02/20",
+                "numberOfRentalDays": 3,
+                "discount": "10"
+            },
+            "expectedFinalCharge": "3.58"
+        },
+        {
+            "scenarioName": "Test3",
+            "rentalRequest": {
+                "toolCode": "CHNS",
+                "checkoutDate": "07/02/15",
+                "numberOfRentalDays": 5,
+                "discount": "25"
+            },
+            "expectedFinalCharge": "3.35"
+        },
+        {
+            "scenarioName": "Test4",
+            "rentalRequest": {
+                "toolCode": "JAKD",
+                "checkoutDate": "09/03/15",
+                "numberOfRentalDays": 6,
+                "discount": "0"
+            },
+            "expectedFinalCharge": "8.97"
+        },
+        {
+            "scenarioName": "Test5",
+            "rentalRequest": {
+                "toolCode": "JAKR",
+                "checkoutDate": "07/02/15",
+                "numberOfRentalDays": 9,
+                "discount": "0"
+            },
+            "expectedFinalCharge": "14.95"
+        },
+        {
+            "scenarioName": "Test6",
+            "rentalRequest": {
+                "toolCode": "JAKR",
+                "checkoutDate": "07/02/20",
+                "numberOfRentalDays": 4,
+                "discount": "50"
+            },
+            "expectedFinalCharge": "1.49"
+        }
+    ]
+}

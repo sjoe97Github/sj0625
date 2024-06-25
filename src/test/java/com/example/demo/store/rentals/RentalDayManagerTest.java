@@ -7,7 +7,17 @@ import java.util.Calendar;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class RentalDayManagerTest {
+/**
+ * Test various date operations, such as:
+ * - Determine if a date is a holiday
+ * - Determination of correct 4th of July date
+ *      Test various where the actual July 4th falls on a weekday, Saturday, and Sunday; therefore the
+ *      holiday would have been (or would be) celebrated on a different day.
+ * - Determination of correct Labor Day date
+ *      Also vary the years being tested to ensure that the correct Labor Day date is determined.
+ * - Determine if a date is a weekend or a weekday
+ */
+public class RentalDayManagerTest {
     static RentalDateManager defaultRentalDateManager = RentalDateManager.getInstance();
 
     static Calendar actualDayIsSaturday = Calendar.getInstance();
@@ -50,8 +60,7 @@ class RentalDayManagerTest {
 
     @Test
     public void validateCorrectLaborDayDate() {
-        // Test the actual labor day date for the year 2022 because;
-        // the celebration of labor day in this year is actually on Monday, the 5th of September.
+        // the celebration of labor day in 2022 is actually on Monday, the 5th of September.
         Calendar actualLaborDay = Calendar.getInstance();
         actualLaborDay.set(2022, Calendar.SEPTEMBER, 5);
         assertTrue(defaultRentalDateManager.isHoliday(actualLaborDay.getTime()));

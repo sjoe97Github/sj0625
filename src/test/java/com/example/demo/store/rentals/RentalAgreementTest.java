@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -16,88 +17,48 @@ import java.util.List;
 import static com.example.demo.store.rentals.CheckoutService.validateRequestAndInitializeRentalAgreement;
 import static org.junit.jupiter.api.Assertions.*;
 
-class RentalAgreementTest {
+/**
+ *  This performs a variety of tests on the RentalAgreements
+ *  The RentalDemoTestBase class is extended to access the test data (see both
+ *  the RentalDemoTestBase and DemoTestData classes, as well as the setup() method in this class).
+ *
+ *  TODO - Consider refactoring the RentalAgreement class to remove some of the redundant code blocks; also consider
+ *         whether or not additional validations and such could be moved into the base class and thereby reduce
+ *         the amount of code in this class as well as make such code accessible to other test classes.
+ */
+public class RentalAgreementTest extends RentalDemoTestBase {
     // Using mockito define the mock Took and RentalCost entities, and the ToolService
     // and RentalCostService services.
-    // Define the CheckoutManager object.
     static Tool mockTool = Mockito.mock(Tool.class);
     static RentalCost mockRentalCost = Mockito.mock(RentalCost.class);
     static ToolService mockToolService = Mockito.mock(ToolService.class);
 
-    static Tool toolCHNS;
-    static Tool toolLADW;
-    static Tool toolJAKD;
-    static Tool toolJAKR;
-
     static List<Tool> reusableToolList = new ArrayList<>();
     static RentalRequest reusableSingleDayWeekDayRentalRequest;
-    static RentalRequest reusableTenDayRentalRequest;
+    static RentalRequest reusableSevenDayRentalRequest;
 
     @BeforeAll
-    static void setUp() {
-        //  The RentalCost and Tool instances created in this method match the
-        //  default H2 database data.  (See schema.sql and data.sql files in the resources directory)
-        //  The purpose for hard-coding this instances is to eliminate the need for the tests to
-        //  use or mock the repositories; and allow the results to be the same as if the controllers were
-        //  being used to retrieve the data from the database.
-        RentalCost ladderRentalCost = new RentalCost();
-        ladderRentalCost.setToolType("Ladder");
-        ladderRentalCost.setDailyCharge("1.99");
-        ladderRentalCost.setWeekdayCharge(true);
-        ladderRentalCost.setWeekendCharge(true);
-        ladderRentalCost.setHolidayCharge(false);
+    static void setUp() throws IOException {
+        setupTestData();
 
-        RentalCost chainsawRentalCost = new RentalCost();
-        chainsawRentalCost.setToolType("Chainsaw");
-        chainsawRentalCost.setDailyCharge("1.49");
-        chainsawRentalCost.setWeekdayCharge(true);
-        chainsawRentalCost.setWeekendCharge(false);
-        chainsawRentalCost.setHolidayCharge(true);
+        //
+        //  Assume all test data lookup returns valid results (no nulls).
+        //  TODO - Consider null checking, or more ideal improve the overall design to avoid nulls using Optionals.
+        //
+        reusableToolList.add(demoTestData.getTool("JAKR"));
 
-        RentalCost jackHammerRentalCost = new RentalCost();
-        jackHammerRentalCost.setToolType("Jackhammer");
-        jackHammerRentalCost.setDailyCharge("2.99");
-        jackHammerRentalCost.setWeekdayCharge(true);
-        jackHammerRentalCost.setWeekendCharge(false);
-        jackHammerRentalCost.setHolidayCharge(false);
-
-        toolCHNS = new Tool();
-        toolCHNS.setTool_code("CHNS");
-        toolCHNS.setTool_type("Chainsaw");
-        toolCHNS.setBrand("Stihl");
-        toolCHNS.setRentalCost(chainsawRentalCost);
-
-        toolLADW = new Tool();
-        toolLADW.setTool_code("LADW");
-        toolLADW.setTool_type("Ladder");
-        toolLADW.setBrand("Werner");
-        toolLADW.setRentalCost(ladderRentalCost);
-
-        toolJAKD = new Tool();
-        toolJAKD.setTool_code("JAKD");
-        toolJAKD.setTool_type("Jackhammer");
-        toolJAKD.setBrand("DeWalt");
-        toolJAKD.setRentalCost(jackHammerRentalCost);
-
-        toolJAKR = new Tool();
-        toolJAKR.setTool_code("JAKR");
-        toolJAKR.setTool_type("Jackhammer");
-        toolJAKR.setBrand("Ridgid");
-        toolJAKR.setRentalCost(jackHammerRentalCost);
-
-        reusableTenDayRentalRequest = new RentalRequest();
-        reusableTenDayRentalRequest.setToolCode("JAKR")
-                .setCheckoutDate("07/02/24")
-                .setNumberOfRentalDays(7)
-                .setDiscount("10");
-
-        reusableSingleDayWeekDayRentalRequest = new RentalRequest();
-        reusableSingleDayWeekDayRentalRequest.setToolCode("JAKR")
+        //  If the desired request can't be found, simply create a new one of with the expected characteristics.
+        List<RentalRequest> filteredRequests = demoTestData.getRentalRequests().stream().filter((r) -> r.getNumberOfRentalDays() == 1).toList();
+        reusableSingleDayWeekDayRentalRequest = !filteredRequests.isEmpty() ? filteredRequests.get(0) : new RentalRequest().setToolCode("JAKR")
                 .setCheckoutDate("07/02/24")
                 .setNumberOfRentalDays(1)
                 .setDiscount("10");
 
-        reusableToolList.add(toolJAKR);
+        filteredRequests = demoTestData.getRentalRequests().stream().filter((r) -> r.getNumberOfRentalDays() == 7).toList();
+        reusableSevenDayRentalRequest = !filteredRequests.isEmpty() ? filteredRequests.get(0) : new RentalRequest().setToolCode("JAKR")
+                .setCheckoutDate("07/02/24")
+                .setNumberOfRentalDays(7)
+                .setDiscount("10");
     }
 
     @Test
@@ -239,9 +200,9 @@ class RentalAgreementTest {
         //  Therefore, the expected number of billable days should be equal to the number of weekdays in the list of
         //  possible billable days.
         //
-        RentalAgreement rentalAgreement = assertDoesNotThrow(() -> validateRequestAndInitializeRentalAgreement(reusableTenDayRentalRequest, mockToolService));
+        RentalAgreement rentalAgreement = assertDoesNotThrow(() -> validateRequestAndInitializeRentalAgreement(reusableSevenDayRentalRequest, mockToolService));
         ArrayList<Date> billableDays = rentalAgreement.buildListOfPossiblyBillableDays();
-        assertEquals(reusableTenDayRentalRequest.getNumberOfRentalDays(), billableDays.size());
+        assertEquals(reusableSevenDayRentalRequest.getNumberOfRentalDays(), billableDays.size());
 
         rentalAgreement.calculateNumberOfEachTypeOfRentalDay(billableDays);
         rentalAgreement.calculateBillableDays();
@@ -367,9 +328,9 @@ class RentalAgreementTest {
         //  Therefore, the expected number of billable days should be equal to the number of weekdays in the list of
         //  possible billable days.
         //
-        RentalAgreement rentalAgreement = assertDoesNotThrow(() -> validateRequestAndInitializeRentalAgreement(reusableTenDayRentalRequest, mockToolService));
+        RentalAgreement rentalAgreement = assertDoesNotThrow(() -> validateRequestAndInitializeRentalAgreement(reusableSevenDayRentalRequest, mockToolService));
         ArrayList<Date> billableDays = rentalAgreement.buildListOfPossiblyBillableDays();
-        assertEquals(reusableTenDayRentalRequest.getNumberOfRentalDays(), billableDays.size());
+        assertEquals(reusableSevenDayRentalRequest.getNumberOfRentalDays(), billableDays.size());
 
         rentalAgreement.calculateNumberOfEachTypeOfRentalDay(billableDays);
         rentalAgreement.calculateBillableDays();
@@ -430,9 +391,9 @@ class RentalAgreementTest {
         //  The total number of each day type in this test should be:
         //      1 holiday, 2 weekend days, and 4 weekdays
         //
-        RentalAgreement rentalAgreement = assertDoesNotThrow(() -> validateRequestAndInitializeRentalAgreement(reusableTenDayRentalRequest, mockToolService));
+        RentalAgreement rentalAgreement = assertDoesNotThrow(() -> validateRequestAndInitializeRentalAgreement(reusableSevenDayRentalRequest, mockToolService));
         ArrayList<Date> billableDays = rentalAgreement.buildListOfPossiblyBillableDays();
-        assertEquals(reusableTenDayRentalRequest.getNumberOfRentalDays(), billableDays.size());
+        assertEquals(reusableSevenDayRentalRequest.getNumberOfRentalDays(), billableDays.size());
 
         rentalAgreement.calculateNumberOfEachTypeOfRentalDay(billableDays);
         rentalAgreement.calculateBillableDays();

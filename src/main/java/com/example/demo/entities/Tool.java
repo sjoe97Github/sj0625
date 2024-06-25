@@ -3,6 +3,9 @@ package com.example.demo.entities;
 import jakarta.persistence.*;
 
 // create a tool entity in the entities package
+//
+// TODO - Refactor to remove the snake case naming convention in methods.
+//
 @Entity
 public class Tool {
     @Id

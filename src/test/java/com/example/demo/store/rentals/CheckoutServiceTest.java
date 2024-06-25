@@ -4,7 +4,6 @@ import com.example.demo.entities.RentalCost;
 import com.example.demo.entities.Tool;
 import com.example.demo.services.ToolService;
 import com.example.demo.store.rentals.exceptions.RentalRequestException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -13,13 +12,21 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class CheckoutManagerTest {
+/**
+ * This class tests the CheckoutManager class.
+ *
+ * Currently, these tests are really only verifying Request validate executed from with the CheckoutService.
+ *      A much more comprehensive set of RentalRequests
+ *      are performed in the RentalAgreementTest and the ScenarioTest classes.
+ */
+public class CheckoutServiceTest {
     // Using mockito define the mock Took and RentalCost entities, and the ToolService
     // and RentalCostService services.
     // Define the CheckoutManager object.
     static Tool mockTool = Mockito.mock(Tool.class);
     static RentalCost mockRentalCost = Mockito.mock(RentalCost.class);
     static ToolService mockToolService = Mockito.mock(ToolService.class);
+    static CheckoutService checkoutService = new CheckoutService(mockToolService);
 
     @Test
     void testWithInvalidRentalDayCount() {
@@ -41,8 +48,6 @@ class CheckoutManagerTest {
                 .setNumberOfRentalDays(5)
                 .setDiscount("101");
 
-        // Create a CheckoutManager object with the mock ToolService.
-        CheckoutService checkoutService = new CheckoutService(mockToolService);
         // The checkout method should throw a RentalRequestException.
         assertThrows(RentalRequestException.class, () -> checkoutService.checkout(rentalRequest));
     }
@@ -61,8 +66,6 @@ class CheckoutManagerTest {
                 .setNumberOfRentalDays(5)
                 .setDiscount("10");
 
-        // Create a CheckoutManager object with the mock ToolService.
-        CheckoutService checkoutService = new CheckoutService(mockToolService);
         // The checkout method should throw a RentalRequestException.
         assertThrows(RentalRequestException.class, () -> checkoutService.checkout(rentalRequest));
     }
@@ -77,8 +80,6 @@ class CheckoutManagerTest {
                 .setNumberOfRentalDays(5)
                 .setDiscount("10");
 
-        // Create a CheckoutManager object with the mock ToolService.
-        CheckoutService checkoutService = new CheckoutService(mockToolService);
         // The checkout method should throw a RentalRequestException.
         assertThrows(RentalRequestException.class, () -> checkoutService.checkout(rentalRequest));
 

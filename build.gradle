@@ -28,4 +28,12 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+    testLogging {
+        // Show standard out and standard error of the test in the console
+        // Note - Purpose: ensure the output from the Scenario Tests will be dumped to the console so that; the
+        //        formatted final output will be visible in the console.
+        showStandardStreams = true
+        events "PASSED", "FAILED", "SKIPPED"
+//        exceptionFormat "full"
+    }
 }

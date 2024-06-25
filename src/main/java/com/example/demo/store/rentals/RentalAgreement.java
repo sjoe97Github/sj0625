@@ -5,6 +5,7 @@ import com.example.demo.store.rentals.exceptions.RentalRequestException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.NumberFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -217,5 +218,62 @@ public class RentalAgreement {
 
     boolean isHolidayCharge() {
         return this.tool.getRentalCosts().getHolidayCharge();
+    }
+
+    //  This method is used to generate a string representation of the RentalAgreement object
+    //  with is formatted according to the demo specifications.
+    //
+    //  CAVEAT:
+    //    This project is built with JDK 17 which supports multi-line strings, therefore the formatting
+    //    of the output string is much cleaner than it would be in earlier versions of Java.
+    //
+    //    If you want to refactor to use a version of Java prior to JDK 15, you will need to refactor to use
+    //    something more complex as shown below or similar (possibly using StringBuilder):
+    //            return "Tool code: " + getToolCode() + "\n" +
+    //            "Tool type: " + getToolType() + "\n" +
+    //            "Tool brand: " + getToolBrand() + "\n" +
+    //            "Rental days: " + getRequestedRentalDays() + "\n" +
+    //            "Checkout date: " + getCheckoutDate() + "\n" +
+    //            "Due date: " + rentalDateManager.dateToString(getDueDate()) + "\n" +
+    //            "Daily rental charge: " + unitedStatesCurrencyFormatter.format(getDailyRentalCharge()) + "\n" +
+    //            "Charge days: " + getBillableDays() + "\n" +
+    //            "Pre-discount charge: " + unitedStatesCurrencyFormatter.format(getPreDiscountedCharge()) + "\n" +
+    //            "Discount percent: " + percentageFormatter.format((new BigDecimal(discountPercent).divide(new BigDecimal(100)))) + "\n" +
+    //            "Discount amount: " + unitedStatesCurrencyFormatter.format(getDiscountAmount()) + "\n" +
+    //            "Final charge: " + unitedStatesCurrencyFormatter.format(getFinalCharge());
+    //
+    public String toString() {
+        NumberFormat unitedStatesCurrencyFormatter = NumberFormat.getCurrencyInstance();
+        NumberFormat percentageFormatter = NumberFormat.getPercentInstance();
+        percentageFormatter.setMaximumFractionDigits(2);
+
+        return """
+                    Tool code: %s
+                    Tool type: %s
+                    Tool brand: %s
+                    Rental days: %d
+                    Checkout date: %s
+                    Due date: %s
+                    Daily rental charge: %s
+                    Charge days: %d
+                    Pre-discount charge: %s
+                    Discount percent: %s
+                    Discount amount: %s
+                    Final charge: %s
+                """
+                .formatted(
+                    getToolCode(),
+                    getToolType(),
+                    getToolBrand(),
+                    getRequestedRentalDays(),
+                    getCheckoutDate(),
+                    rentalDateManager.dateToString(getDueDate()),
+                    unitedStatesCurrencyFormatter.format(getDailyRentalCharge()),
+                    getBillableDays(),
+                    unitedStatesCurrencyFormatter.format(getPreDiscountedCharge()),
+                    percentageFormatter.format((new BigDecimal(discountPercent).divide(new BigDecimal(100)))),
+                    unitedStatesCurrencyFormatter.format(getDiscountAmount()),
+                    unitedStatesCurrencyFormatter.format(getFinalCharge())
+                );
     }
 }
