@@ -1,28 +1,84 @@
 package com.example.demo.store.rentals;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Date;
+import java.util.Calendar;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class RentalManagerTest {
-    @Test
-    public void validateCorrectJulyFourthDate() {
-        //  Create a few constants representing the actual date of July 4th in three different years;
-        //  one where July 4th falls on the exact date of July 4th, and
-        //  one where the actual day of July 4th falls on a Saturday, and
-        //  one where the actual day of July 4th falls on a Sunday.
+class RentalDayManagerTest {
+    static RentalDateManager defaultRentalDateManager = RentalDateManager.getInstance();
 
-        //  Create the three July 4th data objects.
+    static Calendar actualDayIsSaturday = Calendar.getInstance();
+    static Calendar actualDayIsSunday = Calendar.getInstance();
+    static Calendar actualDayIsMonday = Calendar.getInstance();
+
+    @BeforeEach
+    public void setUp() {
+        //  Create three July 4th data objects.
+        //      one where July 4th falls on the exact date of July 4th, and
+        //      one where the actual day of July 4th falls on a Saturday, and
+        //      one where the actual day of July 4th falls on a Sunday.
         //  Note - these actual dates can be confirmed, simply, by referring to a calendar.
-        Date actualDayIsSaturday = new Date(2020, 7, 4);
-        Date actualDayIsSunday = new Date(2021, 7, 4);
-        Date actualDayIsMonday = new Date(2022, 7, 4);
+        actualDayIsSaturday.set(2020, Calendar.JULY, 4);
+        actualDayIsSunday.set(2021, Calendar.JULY, 4);
+        actualDayIsMonday.set(2022, Calendar.JULY, 4);
+    }
 
+    @Test
+    // Test various dates to ensure that the correct July 4th determination
+    public void validateCorrectJulyFourthDate() {
+        // Test the actual july 4th dates for the years 2020 and 2021 because;
+        // the celebration of july 4th in these years is actually on Friday and Monday respectively.
 
+        // The celebrated date for July 4th, 2020 should be Friday, the 2nd of July
+        assertFalse(defaultRentalDateManager.isHoliday(actualDayIsSaturday.getTime()));
+        Calendar testDate20200702 = Calendar.getInstance();
+        testDate20200702.set(2020, Calendar.JULY, 3);
+        assertTrue(defaultRentalDateManager.isHoliday(testDate20200702.getTime()));
 
-        RentalManager rentalManager = new RentalManager();
-        assertTrue(rentalManager.isJulyFourth("07/04/2020"));
+        // The celebrated date for July 4th, 2021 should be Monday, the 5th of July
+        assertFalse(defaultRentalDateManager.isHoliday(actualDayIsSunday.getTime()));
+        Calendar testDate20210705 = Calendar.getInstance();
+        testDate20210705.set(2021, Calendar.JULY, 5);
+        assertTrue(defaultRentalDateManager.isHoliday(testDate20210705.getTime()));
+
+        // Now test a date where July 4th falls on a weekday; so the holiday is celebrated on that day.
+        assertTrue(defaultRentalDateManager.isHoliday(actualDayIsMonday.getTime()));
+    }
+
+    @Test
+    public void validateCorrectLaborDayDate() {
+        // Test the actual labor day date for the year 2022 because;
+        // the celebration of labor day in this year is actually on Monday, the 5th of September.
+        Calendar actualLaborDay = Calendar.getInstance();
+        actualLaborDay.set(2022, Calendar.SEPTEMBER, 5);
+        assertTrue(defaultRentalDateManager.isHoliday(actualLaborDay.getTime()));
+
+        Calendar testDate20240902 = Calendar.getInstance();
+        testDate20240902.set(2024, Calendar.SEPTEMBER, 2);
+        assertTrue(defaultRentalDateManager.isHoliday(testDate20240902.getTime()));
+
+        Calendar testDate20240909 = Calendar.getInstance();
+        testDate20240909.set(2024, Calendar.SEPTEMBER, 9);
+        assertFalse(defaultRentalDateManager.isHoliday(testDate20240909.getTime()));
+
+        // Test with a year when 9/1 actually falls on a Monday
+        Calendar testDate20140901 = Calendar.getInstance();
+        testDate20140901.set(2014, Calendar.SEPTEMBER, 1);
+        assertTrue(defaultRentalDateManager.isHoliday(testDate20140901.getTime()));
+    }
+
+    @Test
+    public void validateWeekend() {
+        // This is an example of grouping assertions that test similar conditions.
+        assertAll(
+                () -> assertTrue(defaultRentalDateManager.isWeekend(actualDayIsSaturday.getTime())),
+                () -> assertTrue(defaultRentalDateManager.isWeekend(actualDayIsSunday.getTime()))
+        );
+
+        // Test a weekday
+        assertFalse(defaultRentalDateManager.isWeekend(actualDayIsMonday.getTime()));
     }
 }

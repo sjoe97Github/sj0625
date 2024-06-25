@@ -1,5 +1,7 @@
 package com.example.demo.store.rentals;
 
+import com.example.demo.store.rentals.exceptions.RentalRequestException;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
@@ -12,74 +14,87 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Convenience class for:
- * - configuration:
- *     - setting the input and output date formats used by the application
- *     - setting the list of holidays used by the application
+ * Singleton convenience class for managing rental dates.
+ * - See comment on the getInstance() method for more information on the singleton pattern used here.
  *
- *       Note: there a defaults representing the demo specification; however, this class provides mutators for
- *       overriding these defaults with custom values.
- *
- * - specialized date operations:
- *     - date formatting
- *     - Validation of date strings, based a specific format given as a ctor argument
- *     - Parsing of date strings, based on a specific format given as a ctor argument
- *     - Formatting of date strings, based on a specific format given as a ctor argument
- *
- * - Predicate functions used to determine:
- *   - Whether a given date is a holiday
- *   - Whether a given date is a weekend
+ * - This class provides a single point of access for:
+ *     - determining whether a given date is a holiday
+ *     - determining whether a given date is a weekend
+ *     - converting date strings to Date objects
+ *     - converting Date objects to date strings
+ *     - validating date strings
  *
  * - Mutators (setters) support a fluent approach to overriding default configuration.
+ *
+ *   Caveats - This class hardcodes:
+ *       - The default date formats for input and output, in accordance with the demo specification.
+ *       - The default holidays, also in accordance with the demo specification.
+ *       - *** This class could be entirely static, but is implemented as a singleton partly to allow for future
+ *             design flexibility (e.g. future support for overriding default holidays, date formats, etc..).
+ *
+ *   TODO -
+ *      - Consider refactoring, providing setters and getters to allow overriding default holidays and date formats.
+ *      - Revisit the use of Calendar, LocalDate, Date, and related classes, to ensure utmost consistency and efficiency.
+ *
  */
-public class RentalDayManager {
+public class RentalDateManager {
     public enum RentalHolidays {
         July4th,
         LaborDay
     }
 
-    public static final String DEFAULT_INPUT_DATE_FORMAT = "MM/dd/yy";
-    public static final String DEFAULT_OUTPUT_DATE_FORMAT = "MM/dd/yy";
+    private static final String DEFAULT_INPUT_DATE_FORMAT = "MM/dd/yy";
+    private static final String DEFAULT_OUTPUT_DATE_FORMAT = "MM/dd/yy";
 
-    private String inputDateFormat = DEFAULT_INPUT_DATE_FORMAT;
-    private String outputDateFormat = DEFAULT_OUTPUT_DATE_FORMAT;
-    private List<RentalHolidays> holidays = List.of(RentalHolidays.July4th, RentalHolidays.LaborDay);
+    private final DateFormat inputDateFormat = new SimpleDateFormat(DEFAULT_INPUT_DATE_FORMAT);
+    private final DateFormat outputDateFormat = new SimpleDateFormat(DEFAULT_OUTPUT_DATE_FORMAT);
 
-    public RentalDayManager() {
+    private final List<RentalHolidays> holidays = List.of(RentalHolidays.July4th, RentalHolidays.LaborDay);
+
+    private RentalDateManager() {}
+
+    //
+    //  Despite the fact that this simple demo application does not require support for multiple threads, a thread-safe
+    //  singleton pattern is used here to demonstrate a best practice for creating a singleton.
+    //
+    //  The pattern uses volatile to leverage built-in synchronization of the Java Memory Model.  This effectively
+    //  ensures that all threads synchronize their access to the INSTANCE variable for the null check; and then
+    //  synchronize their access to modify the INSTANCE variable.
+    //
+    //  It would be simpler to remove the volatile keyword on INSTANCE and simply synchronize the getInstance() method
+    //  itself but that approach introduces unnecessary extra synchronization overhead for the majority of cases where
+    //  the INSTANCE is already initialized.
+    //
+    private static volatile RentalDateManager INSTANCE;
+    public static RentalDateManager getInstance() {
+        if (INSTANCE == null) {
+            synchronized (RentalDateManager.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new RentalDateManager();
+                }
+            }
+        }
+        return INSTANCE;
     }
 
-    public String getInputDateFormat() {
-        return inputDateFormat;
+    Date stringToDate(String inputDate) throws RentalRequestException {
+        try {
+            return inputDateFormat.parse(inputDate);
+        } catch (Exception e) {
+            //  Ignore the exception and return null, as that is the expected result/contract for this method
+            throw new RentalRequestException("Invalid date format: " + inputDate, e);
+        }
     }
 
-    public RentalDayManager setInputDateFormat(String inputDateFormat) {
-        this.inputDateFormat = inputDateFormat;
-        return this;
-    }
-
-    public String getOutputDateFormat() {
-        return outputDateFormat;
-    }
-
-    public RentalDayManager setOutputDateFormat(String outputDateFormat) {
-        this.outputDateFormat = outputDateFormat;
-        return this;
-    }
-
-    public List<RentalHolidays> getHolidays() {
-        return holidays;
-    }
-
-    public RentalDayManager setHolidays(List<RentalHolidays> holidays) {
-        this.holidays = holidays;
-        return this;
+    public String dateToString(Date date) {
+        return outputDateFormat.format(date);
     }
 
     public boolean isValidInputDateFormat(String inputDate) {
         // compare the date format of the inputDate string with inputDateFormat
-        DateFormat df = new SimpleDateFormat(inputDateFormat);
         try {
-            df.parse(inputDate);
+            // parse the input date thereby validating that it is in the correct format
+            inputDateFormat.parse(inputDate);
             return true;
         } catch (Exception e) {
             //  Ignore the exception and return false, as that is the expected result/contract for this method
@@ -87,9 +102,12 @@ public class RentalDayManager {
         }
     }
 
-    public String toFormattedOutputString(Date date) {
-        DateFormat df = new SimpleDateFormat(outputDateFormat);
-        return df.format(date);
+    public boolean isWeekDay(Date thisDay) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(thisDay);
+        int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+
+        return !(dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY);
     }
 
     public boolean isWeekend(Date thisDay) {
@@ -142,7 +160,7 @@ public class RentalDayManager {
         return new Date(cal.getTime().getTime());
     }
 
-    public static Date actualDateForLaborDay(int year) {
+    private static Date actualDateForLaborDay(int year) {
         LocalDate firstOfSeptember = LocalDate.of(year, Month.SEPTEMBER, 1);
         LocalDate firstMondayInSeptember = firstOfSeptember.with(TemporalAdjusters.firstInMonth(DayOfWeek.MONDAY));
 
@@ -152,7 +170,8 @@ public class RentalDayManager {
         return calendar.getTime();
     }
 
-    public static boolean matchOnlyOnDay(Date date1, Date date2) {
+    //  This method is used to compare two dates, ignoring the time portion.
+    static boolean matchOnlyOnDay(Date date1, Date date2) {
         // TODO - Unnecessary Overhead?  Consider refactoring using Calendar instances, compare the day, month, and year
         //          of each instance with each other.
         LocalDate localDate1 = date1.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();

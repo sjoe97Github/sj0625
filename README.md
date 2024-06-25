@@ -13,7 +13,8 @@ What things you need to install the software and how to install them.
 - Java
 JDK 17 (Azul Zulu Version 17.0.3)
 - Gradle
-- Spring Boot
+   Gradle 7.3
+
 
 ### Installing
 
