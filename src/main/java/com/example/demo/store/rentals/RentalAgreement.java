@@ -1,7 +1,12 @@
 package com.example.demo.store.rentals;
 
 import com.example.demo.entities.Tool;
+import com.example.demo.json.serializers.StringAsPercentageSerializer;
 import com.example.demo.store.rentals.exceptions.RentalRequestException;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -10,18 +15,46 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Represents a rental agreement during and after checkout with any given rental request.
+ * There are methods to calculate billable days ("Charge days"), due date, pre-discount charge, etc.
+ *
+ * The toString() method will format instances for console output, per the specification.
+ *
+ * Caveat -  The JSON serialization is a work in progress.   This specification did not call for JSON
+ *           serialization; however, I took a first pass at it partly because I wanted to "play around" with some
+ *           custom JSON serializers, the @JsonFormat annotation, and renaming serialized field names using
+ *           the @JsonProperty annotation.   And, partly because I wanted to introduce a POST endpoint taking
+ *           a RentalRequest in the body and returning a finalized RentalAgreement; so I could exercise and
+ *           validate, if I chose to do so, the checkout process.   (see RentalRequestController.checkout() method)
+ *           This and the other controllers allow me to exercise the JPA entities, services, and repositories (the
+ *           H2 data) without having to build a front-end; and compare the results with the scenario test results
+ *           (see also the ScenarioTest class).
+ */
 public class RentalAgreement {
     RentalDateManager rentalDateManager = RentalDateManager.getInstance();
 
+    @JsonIgnore
     private Tool tool;
+    @JsonProperty("Rental days")
     private int requestedRentalDays;
+    @JsonProperty("Checkout date")
     private String checkoutDate;
+    @JsonIgnore
     private Date startDate;
+    @JsonProperty("Due date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yy")
     private Date dueDate;
+    @JsonProperty("Discount percent")
+    @JsonSerialize(using = StringAsPercentageSerializer.class)
     private String discountPercent;
+    @JsonProperty("Charge days")
     private int billableDays;
+    @JsonProperty("Pre-discount charge")
     private BigDecimal preDiscountedCharge;
+    @JsonProperty("Discount amount")
     private BigDecimal discountAmount;
+    @JsonProperty("Final Charge")
     private BigDecimal finalCharge;
 
     private int numberOfWeekendDays;
@@ -152,14 +185,17 @@ public class RentalAgreement {
         return this;
     }
 
+    @JsonProperty("Tool code")
     String getToolCode() {
         return tool.getTool_code();
     }
 
+    @JsonProperty("Tool type")
     String getToolType() {
         return tool.getTool_type();
     }
 
+    @JsonProperty("Tool brand")
     String getToolBrand() {
         return tool.getBrand();
     }
@@ -204,6 +240,7 @@ public class RentalAgreement {
         return dueDate;
     }
 
+    @JsonProperty("Daily rental charge")
     BigDecimal getDailyRentalCharge() {
         return new BigDecimal(this.tool.getRentalCosts().getDailyCharge());
     }
