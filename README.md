@@ -58,7 +58,7 @@ This is a Spring JPA/Hibernate project.
 > The specification did not require the use of a database, jpa, or hibernate, but I chose this approach as a personal experiment
 > to demonstrate the use of JPA/Hibernate and as a convenient way for me to define the data model and related classes.  
 > Using the REST api defined by the Spring controllers and associated service classes allowed me retrieve sample data from the DB 
-> which made it easy to build a set of mock (test) data to use in the unit tests.
+> and made it easy to build mock, test data for use by unit tests.
 
 > The schema and sample data are contained in the _src/main/resources/schema.sql_ and _src/main/resources/data.sql_ files
 
@@ -87,17 +87,17 @@ This is a Spring JPA/Hibernate project.
   - **Tool** - Represents a tool in the rental store
   - **RentalCost** - Represents charges for each category of tool
  
-    > Tool and RentalCost are joined on "tool type" and uesd to calculate the rental charges for any given tool
+    > Tool and RentalCost are joined on "tool type" and used to calculate the rental charges for any given tool
 
   - **RentalRequest** - Represents a request for a tool rental
   - **RentalDateManager** - Utility class providing most of the functionality around date manipulation, and determination of holidays and weekends
   - **RentalAgreement** - Represents a finalized rental agreement, including charges and due dates.  This class contains all the logic necessary to calculate discounts, charges, and rental timeframe, etc.
   - **CheckoutService** - Responsible for taking a RentalRequest, validating the request, and producing a finalized rental agreement.
 
-    > This class contains the logic necessary to validate the rental request; validating tool code, checkout data, number of rental days, and request discount, as well as tool lookup based on tool code.
+    > This class contains the logic necessary to validate the rental request; validating tool code, checkout data, number of rental days, and request discount, as well as Tool object lookup based on the tool code contained in the request.
 
 ##### Test classes of note:
-  - **ScenarioTest** - Contains the primary test scenarios for the project
+  - **ScenarioTest** - Runs complete test scenarios
   - **RentalAgreementTest** - Contains the tests for the RentalAgreement class
   - **CheckoutServiceTest** - Contains the tests for the CheckoutService class
   - **RentalDateManagerTest** - Contains the tests for the RentalDateManager class
@@ -105,8 +105,8 @@ This is a Spring JPA/Hibernate project.
     > This class is extended only by the RentalAgreementTest and CheckoutServiceTest classes. It contains the method(s) necessary to load test data from the src/test/resources/demoTestData.json file. The test data is deserialized into an instance of the DemoTestData class.
   - **DemoTestData** - Contains the test data for the project
     > Again, this class is populated by the RentalDemoTestBase class.
-  - **ScenarioTest** - Represents a test scenario.  
-    > This class is used to define a test scenario, including the rental request, expected rental agreement, and expected exceptions. The test scenario is then executed by the ScenarioTest class.    > The DemoTestData object holds a collection of test scenarios, each of which represents a test case/scenario detailed in the specification.
+  - **ScenarioRequest** - Represents a test scenario.  
+    > This class is used to define a test scenario, including the rental request, expected rental agreement, and expected exceptions. The test scenario is then executed by the ScenarioTest class.  The DemoTestData object holds a collection of test scenarios, each of which represents a test case/scenario detailed in the specification.
 
 ### Running the tests
 The tests can obviously be run, directly, from within the IDE (_IntelliJ in my case_), but they can also be run from the command line as shown above in the
