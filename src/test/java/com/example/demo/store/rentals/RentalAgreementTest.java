@@ -377,7 +377,7 @@ public class RentalAgreementTest extends RentalDemoTestBase {
      * created in the setup method will be used here.
      */
     @Test
-    void finalizeAgreement() {
+    void finalizeAgreementWrapperTest() {
         // when ToolService is called to find a tool by code, return null.
         Mockito.when(mockToolService.findByCode(Mockito.anyString())).thenReturn(reusableToolList);
 
@@ -392,28 +392,21 @@ public class RentalAgreementTest extends RentalDemoTestBase {
         //      1 holiday, 2 weekend days, and 4 weekdays
         //
         RentalAgreement rentalAgreement = assertDoesNotThrow(() -> validateRequestAndInitializeRentalAgreement(reusableSevenDayRentalRequest, mockToolService));
-        ArrayList<Date> billableDays = rentalAgreement.buildListOfPossiblyBillableDays();
-        assertEquals(reusableSevenDayRentalRequest.getNumberOfRentalDays(), billableDays.size());
-
-        rentalAgreement.calculateNumberOfEachTypeOfRentalDay(billableDays);
-        rentalAgreement.calculateBillableDays();
-        assertEquals(4, rentalAgreement.getBillableDays());
 
         //  assert that finalize does not throw an exception
         assertDoesNotThrow(rentalAgreement::finalizeAgreement);
+        assertEquals(4, rentalAgreement.getBillableDays());
 
         //  Verify pre-discount charge
         //
         //  Given the test tool being used, the per day charge is $2.99; therefore, the pre-discount charge should be
         //  ($2.99 * 4) = $11.96 (rounded up by half)
-        rentalAgreement.calculatePreDiscountCharge();
         BigDecimal expectedPreDiscountCharge = new BigDecimal("11.96").setScale(2, RoundingMode.HALF_UP);
         BigDecimal actualPreDiscountCharge = rentalAgreement.getPreDiscountedCharge();
         assertEquals(expectedPreDiscountCharge, actualPreDiscountCharge);
 
         //  Verify discount amount
         //
-        rentalAgreement.calculateDiscountAmount();
         BigDecimal actualDiscountAmount = rentalAgreement.getDiscountAmount();
         //  The discount is 10%, so the discount amount should be $1.96 (rounded up by half) = $1.20
         BigDecimal expectedDiscountAmount = new BigDecimal("1.20").setScale(2, RoundingMode.HALF_UP);
@@ -421,38 +414,33 @@ public class RentalAgreementTest extends RentalDemoTestBase {
 
         //  Verify final charge
         //
-        rentalAgreement.calculateFinalCharge();
         BigDecimal actualFinalCharge = rentalAgreement.getFinalCharge();
         BigDecimal expectedFinalCharge = actualPreDiscountCharge.subtract(actualDiscountAmount).setScale(2, RoundingMode.HALF_UP);
         assertEquals(expectedFinalCharge, actualFinalCharge);
+
 
         //  ---------------------------------------------------------------------------------------------------------
         //  Rerun validations using a single day rental request
         //  ---------------------------------------------------------------------------------------------------------
         rentalAgreement = assertDoesNotThrow(() -> validateRequestAndInitializeRentalAgreement(reusableSingleDayWeekDayRentalRequest, mockToolService));
-        billableDays = rentalAgreement.buildListOfPossiblyBillableDays();
-        assertEquals(reusableSingleDayWeekDayRentalRequest.getNumberOfRentalDays(), billableDays.size());
-        //  In this case, the expected number of each type of day is:
-        //      0 holiday, 0 weekend days, and 1 weekdays
-        rentalAgreement.calculateNumberOfEachTypeOfRentalDay(billableDays);
-        rentalAgreement.calculateBillableDays();
-        assertEquals(1, rentalAgreement.getBillableDays());
-
         //  assert that finalize does not throw an exception
         assertDoesNotThrow(rentalAgreement::finalizeAgreement);
+
+        //  In this case, the expected number of each type of day is:
+        //      0 holiday, 0 weekend days, and 1 weekdays
+        assertEquals(1, rentalAgreement.getBillableDays());
+
 
         //  Verify pre-discount charge
         //
         //  Given the test tool being used, the per day charge is $2.99; therefore, the pre-discount charge should be
         //  ($2.99 * 1 rounded up by half) = $2.00
-        rentalAgreement.calculatePreDiscountCharge();
         expectedPreDiscountCharge = new BigDecimal("2.99").setScale(2, RoundingMode.HALF_UP);
         actualPreDiscountCharge = rentalAgreement.getPreDiscountedCharge();
         assertEquals(expectedPreDiscountCharge, actualPreDiscountCharge);
 
         //  Verify discount amount
         //
-        rentalAgreement.calculateDiscountAmount();
         actualDiscountAmount = rentalAgreement.getDiscountAmount();
         //  The discount is 10%, so the discount amount should be $1.96 (rounded up by half) = $1.20
         expectedDiscountAmount = new BigDecimal("0.2999").setScale(2, RoundingMode.HALF_UP);
@@ -460,9 +448,9 @@ public class RentalAgreementTest extends RentalDemoTestBase {
 
         //  Verify final charge
         //
-        rentalAgreement.calculateFinalCharge();
         actualFinalCharge = rentalAgreement.getFinalCharge();
         expectedFinalCharge = actualPreDiscountCharge.subtract(actualDiscountAmount).setScale(2, RoundingMode.HALF_UP);
         assertEquals(expectedFinalCharge, actualFinalCharge);
     }
+
 }

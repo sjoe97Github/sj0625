@@ -39,7 +39,7 @@ public class ScenarioTest extends RentalDemoTestBase {
     @DisplayName("Parameterized Scenario Test with Rental Requests obtained from DemoTestData")
     @ParameterizedTest(name = "Test Scenario: {index}")
     @MethodSource("provideRentalRequests")
-    public void testSenario(ScenarioRequest senarioRequest) throws JsonProcessingException {
+    public void testScenario(ScenarioRequest senarioRequest) throws JsonProcessingException {
         //
         // This parameterized test method will be invoked once for each ScenarioRequest object in the demoTestData.
         //
