@@ -6,7 +6,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class DemoConfig {
-    // very rudimentary configuration class
+    // simple configuration class solely for making custom JSON serializer, RentalAgreementSerializer, available
+    // as a Spring bean.
     @Bean
     public RentalAgreementSerializer rentalAgreementSerializer() {
         return new RentalAgreementSerializer();

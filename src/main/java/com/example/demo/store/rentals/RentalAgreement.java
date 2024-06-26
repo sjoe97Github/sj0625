@@ -6,6 +6,7 @@ import com.example.demo.store.rentals.exceptions.RentalRequestException;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.math.BigDecimal;
@@ -19,18 +20,25 @@ import java.util.stream.IntStream;
  * Represents a rental agreement during and after checkout with any given rental request.
  * There are methods to calculate billable days ("Charge days"), due date, pre-discount charge, etc.
  *
- * The toString() method will format instances for console output, per the specification.
+ * The toString() method formats instances for console output, per the specification.
  *
- * Caveat -  The JSON serialization is a work in progress.   This specification did not call for JSON
- *           serialization; however, I took a first pass at it partly because I wanted to "play around" with some
- *           custom JSON serializers, the @JsonFormat annotation, and renaming serialized field names using
- *           the @JsonProperty annotation.   And, partly because I wanted to introduce a POST endpoint taking
- *           a RentalRequest in the body and returning a finalized RentalAgreement; so I could exercise and
- *           validate, if I chose to do so, the checkout process.   (see RentalRequestController.checkout() method)
- *           This and the other controllers allow me to exercise the JPA entities, services, and repositories (the
- *           H2 data) without having to build a front-end; and compare the results with the scenario test results
- *           (see also the ScenarioTest class).
+ * Important - JSON serialization is a work in progress.
+ *      This specification did not call for JSON serialization. However, I wanted to "play around" with
+ *      custom JSON serializers and various annotations to control formatting, renaming and ordering serialized
+ *      fields (i.e. @JsonFormat, @JsonSerialize, @JsonPropertyOrder, and renaming serialized field names using
+ *      the @JsonProperty annotation.
+ *
+ *      I also wanted to introduce a POST endpoint taking a RentalRequest in the body and returning a finalized
+ *      RentalAgreement in the response.  This allowed me a quick and dirty way to validate the checkout process, In
+ *      particular the RentalRequestController.  (Also see the checkout() and checkoutAsJson() methods which return
+ *      JSON and the formatted string output from RentalAgreement.toString() method, respectively.)
+ *
+ *      Lastly, there is still some field formatting work required to format the "money" fields per the specification.
  */
+@JsonPropertyOrder({
+        "Tool code", "Tool type", "Tool brand", "Rental days", "Checkout date", "Due date", "Daily rental charge",
+        "Charge days", "Pre-discount charge", "Discount percent", "Discount amount", "Final charge"
+})
 public class RentalAgreement {
     RentalDateManager rentalDateManager = RentalDateManager.getInstance();
 

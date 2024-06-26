@@ -43,7 +43,4 @@ public class RentalRequestController {
         rentalAgreement = checkoutService.checkout(rentalRequest);
         return rentalAgreementSerializer.toJson(rentalAgreement);
     }
-
-    // This is a simple method to return a JSON representation of the RentalAgreement object using a custom serializer
-    // which simply leverages the RentalAgreement's toString() method.
 }
