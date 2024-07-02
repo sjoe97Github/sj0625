@@ -31,6 +31,7 @@ import java.util.List;
  *       - The default holidays, also in accordance with the demo specification.
  *       - This class could be entirely static, but is implemented as a singleton partly to allow for future
  *         design flexibility (e.g. future support for overriding default holidays, date formats, etc..).
+ *
  *         TODO - Consider converting this class to a static utility class, thereby removing the singleton pattern; and
  *                only providing functionality in support of the current demo specification (which are hardcoded).
  *
@@ -63,16 +64,31 @@ public class RentalDateManager {
     //  itself but that approach introduces unnecessary extra synchronization overhead for the majority of cases where
     //  the INSTANCE is already initialized.
     //
-    private static volatile RentalDateManager INSTANCE;
+    //    private static volatile RentalDateManager INSTANCE;
+    //    public static RentalDateManager getInstance() {
+    //        if (INSTANCE == null) {
+    //            synchronized (RentalDateManager.class) {
+    //                if (INSTANCE == null) {
+    //                    INSTANCE = new RentalDateManager();
+    //                }
+    //            }
+    //        }
+    //        return INSTANCE;
+    //    }
+
+    //
+    // A cleaner and more efficient singleton design is the "Initialization-on-demand holder idiom (IoDH)".
+    // This singleton design takes full advantage of the Java Memory Model. In particular this design leverages the fact
+    // that the JVM won't load static inner classes until they are referenced, and this design guarantees thread-safety
+    // by leveraging the fact that JVM also ensures thread safety while classes are being initialized.
+    // (This design is also known as the "Bill Pugh Singleton Design Pattern".)
+    //
+    private static class RentalDateManagerInstanceHolder {
+        private static final RentalDateManager INSTANCE = new RentalDateManager();
+    }
+
     public static RentalDateManager getInstance() {
-        if (INSTANCE == null) {
-            synchronized (RentalDateManager.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = new RentalDateManager();
-                }
-            }
-        }
-        return INSTANCE;
+        return RentalDateManagerInstanceHolder.INSTANCE;
     }
 
     Date stringToDate(String inputDate) throws RentalRequestException {
