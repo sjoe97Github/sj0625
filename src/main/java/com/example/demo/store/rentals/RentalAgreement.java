@@ -126,7 +126,7 @@ public class RentalAgreement {
     void calculateNumberOfEachTypeOfRentalDay(ArrayList<Date> rentalDays) {
         numberOfWeekendDays = (int) rentalDays.stream().filter(rentalDateManager::isWeekend).count();
         numberOfHolidays = (int) rentalDays.stream().filter(rentalDateManager::isHoliday).count();
-        numberOfWeekdays = (int) rentalDays.stream().filter((rentalDay) -> rentalDateManager.isWeekDay(rentalDay) && !rentalDateManager.isHoliday(rentalDay)).count();
+        numberOfWeekdays = requestedRentalDays - (numberOfWeekendDays + numberOfHolidays);
     }
 
     // package-private for testing
