@@ -71,7 +71,7 @@ public class CheckoutService {
             );
         }
 
-        List<Tool> toolList = toolService.findByCode(toolCode);
+        List<Tool> toolList = toolService.getToolByCode(toolCode);
         if (toolList.isEmpty()) {
             throw new RentalRequestException(
                     String.format("No tool found for tool code = %s", toolCode)

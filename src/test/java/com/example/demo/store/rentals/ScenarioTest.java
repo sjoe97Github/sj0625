@@ -58,7 +58,7 @@ public class ScenarioTest extends RentalDemoTestBase {
 
         // The mock ToolService returns the tool from the demoTestData tools list by specifying the answer (result)
         // that should be returned for any given invocation during checkout validation.
-        Mockito.when(mockToolService.findByCode(Mockito.anyString())).thenAnswer(invocation -> {
+        Mockito.when(mockToolService.getToolByCode(Mockito.anyString())).thenAnswer(invocation -> {
             String toolCode = invocation.getArgument(0);
             Tool theTool = demoTestData.getTools().stream()
                     .filter(tool -> tool.getTool_code().equals(toolCode))

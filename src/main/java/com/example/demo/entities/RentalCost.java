@@ -1,21 +1,11 @@
 package com.example.demo.entities;
 
-import jakarta.persistence.*;
-
-@Entity(name = "rental_cost")
 public class RentalCost {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "tool_type")
     private String type;
-    @Column(name = "daily_charge")
     private String dailyCharge;
-    @Column(name = "weekday_charge")
     private Boolean weekdayCharge;
-    @Column(name = "weekend_charge")
     private Boolean weekendCharge;
-    @Column(name = "holiday_charge")
     private Boolean holidayCharge;
 
     // Getters and Setters
@@ -23,12 +13,16 @@ public class RentalCost {
         return id;
     }
 
-    public String getToolType() {
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getType() {
         return type;
     }
 
-    public void setToolType(String toolType) {
-        this.type = toolType;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getDailyCharge() {

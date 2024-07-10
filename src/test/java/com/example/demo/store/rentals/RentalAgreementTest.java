@@ -70,7 +70,7 @@ public class RentalAgreementTest extends RentalDemoTestBase {
                 .setDiscount("10");
 
         // when ToolService is called to find a tool by code, return null.
-        Mockito.when(mockToolService.findByCode(Mockito.anyString())).thenReturn(reusableToolList);
+        Mockito.when(mockToolService.getToolByCode(Mockito.anyString())).thenReturn(reusableToolList);
 
         RentalAgreement rentalAgreement = assertDoesNotThrow(() -> validateRequestAndInitializeRentalAgreement(rentalRequest, mockToolService));
         ArrayList<Date> billableDays = rentalAgreement.buildListOfPossiblyBillableDays();
@@ -180,7 +180,7 @@ public class RentalAgreementTest extends RentalDemoTestBase {
     @Test
     void calculateBillableDays() {
         // when ToolService is called to find a tool by code, return null.
-        Mockito.when(mockToolService.findByCode(Mockito.anyString())).thenReturn(reusableToolList);
+        Mockito.when(mockToolService.getToolByCode(Mockito.anyString())).thenReturn(reusableToolList);
 
         // First test with multiple days...
         //
@@ -308,7 +308,7 @@ public class RentalAgreementTest extends RentalDemoTestBase {
     @Test
     void testPreDiscountChargeDiscountAmountFinalCharge() {
         // when ToolService is called to find a tool by code, return null.
-        Mockito.when(mockToolService.findByCode(Mockito.anyString())).thenReturn(reusableToolList);
+        Mockito.when(mockToolService.getToolByCode(Mockito.anyString())).thenReturn(reusableToolList);
 
         // First test with multiple days...
         //
@@ -379,7 +379,7 @@ public class RentalAgreementTest extends RentalDemoTestBase {
     @Test
     void finalizeAgreementWrapperTest() {
         // when ToolService is called to find a tool by code, return null.
-        Mockito.when(mockToolService.findByCode(Mockito.anyString())).thenReturn(reusableToolList);
+        Mockito.when(mockToolService.getToolByCode(Mockito.anyString())).thenReturn(reusableToolList);
 
         // First test with multiple days...
         //

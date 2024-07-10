@@ -24,7 +24,7 @@ import java.util.List;
 public class ToolController {
     private static ObjectMapper objectMapper = new ObjectMapper();
 
-    ToolService toolService;
+    private final ToolService toolService;
 
     ToolController(ToolService toolService) {
         this.toolService = toolService;
@@ -32,22 +32,22 @@ public class ToolController {
 
     @GetMapping("/tools")
     public Iterable<Tool> tools() {
-        return toolService.findAll();
+        return toolService.getAllTools();
     }
 
     @GetMapping("/tool/code/{tool_code}")
     public Iterable<Tool> toolByToolCode(@PathVariable String tool_code) {
-        return toolService.findByCode(tool_code);
+        return toolService.getToolByCode(tool_code);
     }
 
     @GetMapping("/tool")
     public Iterable<Tool> toolByToolByCodeRequestParam(@RequestParam(name = "code") String tool_code) {
-        return toolService.findByCode(tool_code);
+        return toolService.getToolByCode(tool_code);
     }
 
     @GetMapping("/tool/type/{tool_type}")
     public Iterable<Tool> toolByToolType(@PathVariable String tool_type) {
-        return toolService.findByType(tool_type);
+        return toolService.getToolByType(tool_type);
     }
 
     //
@@ -58,7 +58,7 @@ public class ToolController {
     //
     @GetMapping("/tool/brand/{brand}")
     public ResponseEntity<String> toolByBrand(@PathVariable String brand) {
-        List<Tool> results = toolService.findByBrand(brand);
+        List<Tool> results = toolService.getToolByBrand(brand);
         if (results.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     "No tool(s) found for brand: " + brand

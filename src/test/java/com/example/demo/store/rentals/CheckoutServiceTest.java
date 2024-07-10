@@ -38,7 +38,7 @@ public class CheckoutServiceTest {
         tools.add(mockTool);
 
         // when ToolService is called to find a tool by code, return null.
-        Mockito.when(mockToolService.findByCode(Mockito.anyString())).thenReturn(tools);
+        Mockito.when(mockToolService.getToolByCode(Mockito.anyString())).thenReturn(tools);
 
         // Create a RentalRequest object with an invalid tool code.
         RentalRequest rentalRequest = new RentalRequest();
@@ -55,7 +55,7 @@ public class CheckoutServiceTest {
     @Test
     void testWithInvalidToolCode() {
         // when ToolService is called to find a tool by code, return null.
-        Mockito.when(mockToolService.findByCode(Mockito.anyString())).thenReturn(new ArrayList<>());
+        Mockito.when(mockToolService.getToolByCode(Mockito.anyString())).thenReturn(new ArrayList<>());
 
         // Create a RentalRequest object with an invalid tool code.
         RentalRequest rentalRequest = new RentalRequest();

@@ -1,0 +1,39 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.RentalCostMapper">
+
+    <resultMap id="RentalCostResultMap" type="com.example.demo.entities.RentalCost">
+        <id property="id" column="id"/>
+        <result property="type" column="tool_type"/>
+        <result property="dailyCharge" column="daily_charge"/>
+        <result property="weekdayCharge" column="weekday_charge"/>
+        <result property="weekendCharge" column="weekend_charge"/>
+        <result property="holidayCharge" column="holiday_charge"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="RentalCostResultMap">
+        SELECT * FROM rental_cost
+    </select>
+
+    <select id="findByType" parameterType="String" resultMap="RentalCostResultMap">
+        SELECT * FROM rental_cost WHERE tool_type = #{type}
+    </select>
+
+    <select id="findByDailyCharge" parameterType="String" resultMap="RentalCostResultMap">
+        SELECT * FROM rental_cost WHERE daily_charge = #{dailyCharge}
+    </select>
+
+    <select id="findByWeekdayCharge" parameterType="Boolean" resultMap="RentalCostResultMap">
+        SELECT * FROM rental_cost WHERE weekday_charge = #{weekdayCharge}
+    </select>
+
+    <select id="findByWeekendCharge" parameterType="Boolean" resultMap="RentalCostResultMap">
+        SELECT * FROM rental_cost WHERE weekend_charge = #{weekendCharge}
+    </select>
+
+    <select id="findByHolidayCharge" parameterType="Boolean" resultMap="RentalCostResultMap">
+        SELECT * FROM rental_cost WHERE holiday_charge = #{holidayCharge}
+    </select>
+
+</mapper>

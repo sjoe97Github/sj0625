@@ -9,7 +9,7 @@
                 "weekdayCharge": true,
                 "weekendCharge": false,
                 "holidayCharge": true,
-                "toolType": "Chainsaw"
+                "type": "Chainsaw"
             },
             "tool_code": "CHNS",
             "tool_type": "Chainsaw"
@@ -23,7 +23,7 @@
                 "weekdayCharge": true,
                 "weekendCharge": true,
                 "holidayCharge": false,
-                "toolType": "Ladder"
+                "type": "Ladder"
             },
             "tool_code": "LADW",
             "tool_type": "Ladder"
@@ -37,7 +37,7 @@
                 "weekdayCharge": true,
                 "weekendCharge": false,
                 "holidayCharge": false,
-                "toolType": "Jackhammer"
+                "type": "Jackhammer"
             },
             "tool_code": "JAKD",
             "tool_type": "Jackhammer"
@@ -51,7 +51,7 @@
                 "weekdayCharge": true,
                 "weekendCharge": false,
                 "holidayCharge": false,
-                "toolType": "Jackhammer"
+                "type": "Jackhammer"
             },
             "tool_code": "JAKR",
             "tool_type": "Jackhammer"

@@ -1,8 +1,10 @@
 package com.example.demo.services;
+
 import com.example.demo.entities.Tool;
-import com.example.demo.repository.ToolRepository;
+import com.example.demo.mapper.ToolMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Optional;
 import java.util.List;
 
@@ -30,26 +32,32 @@ import java.util.List;
  */
 @Service
 public class ToolService {
-    private final ToolRepository toolRepository;
+    private final ToolMapper toolMapper;
 
-    public ToolService(ToolRepository toolRepository) {
-        this.toolRepository = toolRepository;
+    public ToolService(ToolMapper toolMapper) {
+        this.toolMapper = toolMapper;
     }
 
-    public List<Tool> findAll() {
-        return toList(toolRepository.findAll());
+    public List<Tool> getAllTools() {
+        return toolMapper.findAll();
     }
 
-    public List<Tool> findByCode(String tool_code) {
-        return toList(toolRepository.findByCode(tool_code));
+    public List<Tool> getToolByCode(String code) {
+        return Optional.ofNullable(toolMapper.findByCode(code))
+                .map(List::of)
+                .orElse(Collections.emptyList());
     }
 
-    public List<Tool> findByType(String tool_type) {
-        return toList(toolRepository.findByType(tool_type));
+    public List<Tool> getToolByType(String type) {
+        return Optional.ofNullable(toolMapper.findByType(type))
+                .map(List::of)
+                .orElse(Collections.emptyList());
     }
 
-    public List<Tool> findByBrand(String brand) {
-        return toList(toolRepository.findByBrand(brand));
+    public List<Tool> getToolByBrand(String brand) {
+        return Optional.ofNullable(toolMapper.findByBrand(brand))
+                .map(List::of)
+                .orElse(Collections.emptyList());
     }
 
     private static List<Tool> toList(Iterable<Tool> iterable) {

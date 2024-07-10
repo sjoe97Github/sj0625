@@ -1,7 +1,7 @@
 package com.example.demo.services;
 
 import com.example.demo.entities.RentalCost;
-import com.example.demo.repository.RentalCostRepository;
+import com.example.demo.mapper.RentalCostMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,20 +15,35 @@ import java.util.stream.StreamSupport;
  */
 @Service
 public class RentalCostService {
-    private final RentalCostRepository rentalCostRepository;
+    private final RentalCostMapper rentalCostMapper;
 
-    public RentalCostService(RentalCostRepository rentalCostRepository) {
-        this.rentalCostRepository = rentalCostRepository;
+    public RentalCostService(RentalCostMapper rentalCostMapper) {
+        this.rentalCostMapper = rentalCostMapper;
     }
 
-    public List<RentalCost> findAll() {
-        return toList(rentalCostRepository.findAll());
+    public List<RentalCost> getAllRentalCosts() {
+        return rentalCostMapper.findAll();
     }
 
-    public List<RentalCost> findByType(String tool_type) {
-        return toList(rentalCostRepository.findByType(tool_type));
+    public RentalCost getRentalCostByType(String type) {
+        return rentalCostMapper.findByType(type);
     }
 
+    public List<RentalCost> getRentalCostsByDailyCharge(String dailyCharge) {
+        return rentalCostMapper.findByDailyCharge(dailyCharge);
+    }
+
+    public List<RentalCost> getRentalCostsByWeekdayCharge(Boolean weekdayCharge) {
+        return rentalCostMapper.findByWeekdayCharge(weekdayCharge);
+    }
+
+    public List<RentalCost> getRentalCostsByWeekendCharge(Boolean weekendCharge) {
+        return rentalCostMapper.findByWeekendCharge(weekendCharge);
+    }
+
+    public List<RentalCost> getRentalCostsByHolidayCharge(Boolean holidayCharge) {
+        return rentalCostMapper.findByHolidayCharge(holidayCharge);
+    }
     private static List<RentalCost> toList(Iterable<RentalCost> iterable) {
         return StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList());
     }

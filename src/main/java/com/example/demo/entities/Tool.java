@@ -1,26 +1,23 @@
 package com.example.demo.entities;
 
-import jakarta.persistence.*;
-
 // create a tool entity in the entities package
 //
 // TODO - Refactor to remove the snake case naming convention in methods.
 //
-@Entity
 public class Tool {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "tool_code")
     private String code;
-    @Column(name = "tool_type")
-
     private String type;
     private String brand;
+    private RentalCost rentalCosts;
 
     // Getters and Setters
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getTool_code() {
@@ -47,16 +44,10 @@ public class Tool {
         this.brand = branc;
     }
 
-    @OneToOne
-    @JoinColumn(name = "tool_type", referencedColumnName = "tool_type",
-            insertable = false, updatable = false)
-    private RentalCost rentalCosts;
-
     public RentalCost getRentalCosts() {
         return rentalCosts;
     }
 
-    // Currently, the sole purpose of this mutator is to facilitate testing
     public void setRentalCost(RentalCost rentalCosts) {
         this.rentalCosts = rentalCosts;
     }
