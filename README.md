@@ -3,6 +3,7 @@
 Rental Store, demo project for a tool rental store.
 
 ## Getting Started
+>Note - The MyBatisConversion branch contains a version of the project that uses MyBatis instead of JPA/Hibernate.  The MyBatisConversion branch is not complete, but it does contain a working version of the project that uses MyBatis.  The MyBatisConversion branch is not the primary branch for this project, but it is available for review.
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
